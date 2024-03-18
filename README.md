@@ -1,4 +1,4 @@
-# L7 Interview Challenges
+# Interview Challenges
 *see [tracebacks.md](./tracebacks.md) and [widgets.md](./widgets.md) for answers to the other challenges*
 ## Project Objective: Benford's Law 
 Create a web application that
