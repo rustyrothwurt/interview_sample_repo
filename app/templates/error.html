@@ -1,0 +1,14 @@
+{% extends"layout.html" %}
+{% block body %}
+    <!--template: /templates/error.html-->
+<div data-path="templates/error.html" data-template="error">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <h1 class="ml-2 p-1"><strong>Oops! </strong>{{ page_data.message }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <p>{{ page_data.data }}</p>
+    </div>
+</div>
+{% endblock %}

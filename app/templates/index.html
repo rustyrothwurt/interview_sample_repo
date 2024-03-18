@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--template: /templates/index.html-->
+<div data-path="templates/index.html" data-template="index">
+{% set request_paths = get_paths(request.path) %}
+    <div class="row">
+       <h2>Welcome!</h2>
+    </div>
+    <div class="row">
+        <div class="card col-lg-3 col-md-6 col-sm-12">
+            <div class="card-header">
+                <h3>Application Setup and Admin</h3>
+            </div>
+            <div class="card-body">
+                 <p class="card-text">
+                    If this is your first time running this app, create the
+                     initial tables by clicking this button:
+                     <a class="badge bg-danger" href="/admin/db">Database Setup</a>.
+                     </br>
+                     Check the README.md for more details
+                     about the database, how to use pgAdmin, etc.
+                <p class="card-text">
+                    To run the unittests (limiited #, again see the README.md
+                    for more details), click
+                    <a class="badge bg-warning" href="/admin/tests">Run Tests</a>.
+                </p>
+            </div>
+        </div>
+        <div class="card col-lg-3 col-md-6 col-sm-12">
+            <div class="card-header">
+                <h3>What is this site and how do I use it?</h3>
+            </div>
+            <div class="card-body">
+
+                <p class="card-text">
+                   This tool allows users to upload numerical data to check if it obeys
+                    <a class="btn badge bg-success" title="click to open the Wikipedia article"
+                       href="https://en.wikipedia.org/wiki/Benford%27s_law"
+                       target="_blank" data-toggle="popover" data-placement="top"
+                       data-content="click to open Wikipedia article">
+                        Benford's law (aka the first-digit law).
+                    </a>
+                    <br>
+                    In brief, it is an observation that in many real-life sets
+                    of numerical data, the leading digit is likely to be small.
+                    You can upload your own data to validate it against this law
+                    (and choose to save it to a database) and view existing data in
+                    the database.
+                </p>
+            </div>
+        </div>
+        <div class="card col-lg-3 col-md-6 col-sm-12">
+            <div class="card-header">
+                 <h3>Upload and Validate Data<h3>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    You can uplaod your own data (as a .csv file) to check if your data
+                    obeys Benford's law. You can also choose to save it to a database.
+                    <br>
+                <a class="btn badge bg-primary" href="/create/jobs">Upload Data</a>
+                </p>
+            </div>
+        </div>
+        <div class="card col-lg-3 col-md-6 col-sm-12">
+             <div class="card-header">
+                 <h3>View Data</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Here you can see the data that has been uploaded previously.
+                </p>
+                <p class="card-text">
+                    Each time a file is uploaded and saved to the database,
+                    a parent record (with basic info like filename, date, a unique
+                    identifier, etc.) is created; these are Ingestion Jobs.
+                    The records (the numerical values) are saved to Ingested Data.
+                    <br>
+                    <a class="btn badge bg-info" href="/view/jobs">View Ingestion Jobs</a>
+                    <a class="btn badge bg-info" href="/view/data">View Ingested Data</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

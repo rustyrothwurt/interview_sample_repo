@@ -1,0 +1,104 @@
+{% from "partials/headers_nav.html" import page_header %}
+{% from "partials/headers_nav.html" import offset_input with context %}
+{% from "partials/tables.html" import benfords_table with context %}
+{% from "partials/tables.html" import significance_table with context %}
+{% from "partials/tables.html" import jobs_table with context %}
+{% from "partials/tables.html" import data_table with context %}
+{% from "partials/plotly.html" import plotly_graph with context %}
+
+{% extends "layout.html" %}
+{% block body %}
+
+<!--template: /templates/view.html-->
+<div data-path="templates/view.html" data-template="view">
+    <!--
+    header uses: macro:header_with_page_action
+    depends_on: page_data defaults
+    -->
+    {% set request_paths = get_paths(request.path) %}
+    <div class="row flex-row">
+        <div class="col-4">
+            {{ page_header(request_paths) }}
+        </div>
+     {% if "page_action" in request_paths and request_paths.page_action == "view" -%}
+        <div class="col-8">
+            <div class="label mt-3">
+                Request Params: {{ page_data.request_obj }}
+            </div>
+        </div>
+     {%- endif %}
+    </div>
+    <hr>
+
+    <!-- show Benfords results as plotly line graphs -->
+    {% if "graphJSON" in page_data and page_data.graphJSON is not none %}
+        <div class="row">
+            <h3>Benford's Law Results Graphs</h3>
+        </div>
+        {{ plotly_graph() }}
+    {% endif %}
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <!-- show Benfords results as grouped table -->
+        {% if "results" in page_data %}
+            <div class="row">
+                <h3>Benford's Law Results Table</h3>
+            </div>
+            <div class="row">
+            {{ benfords_table(page_data.results) }}
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <!-- show Benfords significance tests as grouped table -->
+        {% if "significance" in page_data %}
+            <div class="row">
+                <h3>Benford's Significance Test Table</h3>
+            </div>
+            <div class="row">
+            {{ significance_table(page_data.significance) }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+    <!-- show all results for this path as table -->
+    {% if "data" in page_data and page_data.data is not none %}
+        <div class="row">
+            <div class="col-3">
+                <h3>All Results Table</h3>
+            </div>
+            <div class="col-4">
+                <div class="label mt-2">
+                    <strong> Found result count:  </strong>
+                    {% if "count" in page_data %}
+                        {{ page_data.data|length }} of {{ page_data.count }}
+                    {% else %}
+                        {{ page_data.data|length }}
+                    {% endif %}
+                </div>
+             </div>
+            <div class="col-4">
+             {% if "page_action" in request_paths and request_paths.page_action == "view" -%}
+                 {% if "offset" in page_data.request_obj and page_data.request_obj.offset is not none -%}
+                     <div class="label mt-2">
+                        {{ offset_input() }}
+                     </div>
+                 {%- endif %}
+             {%- endif %}
+            </div>
+        </div>
+
+        <div class="row">
+         {% if "jobs" in request.path -%}
+            {{ jobs_table(page_data.data) }}
+         {%- endif %}
+        {% if "data" in request.path -%}
+            {{ data_table(page_data.data) }}
+         {%- endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+<!--
+    macros:headers_navs : /templates/partials/plotly.html
+    this is a file where the plotly macro for graphs is kept
+-->
+{% macro plotly_graph() -%}
+	<div data-path="templates/partials/plotly.html" data-macro="plotly_graph">
+        <div id="charts" class="row">
+            <div id="chart" class="col-lg-6 col-md-6 col-sm-12 chart" style="height:400px;">
+            </div>
+            <div id="chart_two" class="col-lg-6 col-md-6 col-sm-12 chart" style="height:400px;">
+            </div>
+        </div>
+        <script type="text/javascript">
+        /*Plotly.newPlot(graphDiv, data, layout, config)*/
+            var graphDiv = document.getElementById('chart');
+            var graphTwoDiv = document.getElementById('chart_two');
+            var layout = {};
+            var graphs = {{ page_data.graphJSON | safe }};
+            if (graphs.length > 0){
+                Plotly.newPlot(graphDiv, graphs[0], layout);
+                if (graphs.length > 1){
+                    Plotly.newPlot(graphTwoDiv, graphs[1], layout);
+                }
+             }
+        </script>
+    </div>
+{%- endmacro %}

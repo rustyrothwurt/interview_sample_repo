@@ -1,0 +1,98 @@
+{% from "partials/headers_nav.html" import page_header %}
+{% extends "layout.html" %}
+{% block body %}
+<!--template: /templates/create.html-->
+<div data-path="templates/create.html" data-template="create">
+    <!--
+    header uses: macro:header_with_page_action
+    depends_on: page_data defaults
+    -->
+{% set request_paths = get_paths(request.path) %}
+    <div class="row">
+        <div class="col-4">
+            {{ page_header(request_paths) }}
+        </div>
+     {% if "page_action" in request_paths and request_paths.page_action == "view" -%}
+        <div class="col-8">
+            <div class="label mt-3">
+                Request Params/Args: {{ page_data.request_obj }}
+            </div>
+        </div>
+     {%- endif %}
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <form class="ml-3 mr-3" action="{{ url_for('create') }}" method="POST" enctype="multipart/form-data">
+               <div class="row">
+                    <h3>File Upload/Validate Instructions</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            Prepare your file first. Save it as csv or text (.csv or .txt).
+                            There should <strong>not</strong> be a header row.
+                            It should only have one value per line (i.e., one "column").
+                            The values should be numerical data (integers and floats/decimal values).
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Note about numbers:</strong>
+                            This tool uses the pandas.to_numeric function to check that all the values are numeric.
+                            If not, the file will be rejected.
+                            To learn about the limitations of pandas.to_numeric,
+                            <a href="https://pandas.pydata.org/docs/reference/api/pandas.to_numeric.html"
+                               target="_blank"
+                               data-toggle="popover"
+                               data-placement="top"
+                               data-content="click to open pandas.to_numeric info">
+                                read the documentation
+                            </a>.
+                            When saved to the database, they will be saved into a NUMERIC field.
+                            <a href="https://www.postgresql.org/docs/13/datatype-numeric.html"
+                               target="_blank"
+                               data-toggle="popover"
+                               data-placement="top"
+                               data-content="click to open postgresql documentation">
+                                Read about the NUMERIC type here.
+                            </a>.
+                        </li>
+                        <li class="list-group-item">
+                            Check the Save to database? box if you want to store this data to the database.
+                            The Job Label text is required if you want to store it to the database.
+                        </li>
+                        <li class="list-group-item">
+                            For Job Label, enter between 5 and 150 characters to identify this ingestion job.
+                            This can be a nickname or some other text that will allow you to search for your data.
+                        </li><li class="list-group-item">
+                            Upload your file. Depending on the size, it might take a while.
+                            Once the tool is done processing, you'll see the results of the validation check.
+                        </li>
+                    </ul>
+               </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label for="shorttext">Job Label</label>
+                            <input id="shorttext" name="shorttext" type="text" minlength="5" maxlength="150" pattern="[0-9A-Za-z\s\-]{5,150}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-2 col-sm-6">
+                        <div class="form-check form-group">
+                            <label class="form-check-label" for="savetodb">Save to database?</label>
+                          <input class="form-check-input" name="savetodb" type="checkbox" id="savetodb">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label for="upload_file">File Upload</label>
+                            <input type="file" class="form-control-file" name="ingesteddata" id="upload_file" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-2 col-sm-6">
+                        <button class="btn btn-sm btn-success ml-2 mr-2 p-1">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

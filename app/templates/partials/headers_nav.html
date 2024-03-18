@@ -1,0 +1,70 @@
+<!--
+    macros:headers_navs : /templates/partials/headers_nav.html
+    this is a file where the page headers and navigation macros are kept
+-->
+{% macro nav_link(title, href) -%}
+	<div data-path="templates/partials/headers_nav.html" data-macro="nav_link">
+	    {% if href in request.path -%}
+            {% if "/" in href -%}
+                <a class="nav-link active" aria-current="page" href="/{{ href }}">
+                   <strong><small>{{ title }}</small></strong>
+                </a>
+            {% else %}
+                <a class="nav-link active" aria-current="page" href="/{{ href }}">
+                    <strong>{{ title }}</strong>
+                </a>
+            {%- endif %}
+	    {% else %}
+	        {% if "/" in href -%}
+                <a class="nav-link" href="/{{ href }}">
+                   <small>{{ title }}</small>
+                </a>
+            {% else %}
+                <a class="nav-link" href="/{{ href }}">
+                    {{ title }}
+                </a>
+            {%- endif %}
+	    {%- endif %}
+    </div>
+{%- endmacro %}
+
+{% macro page_header(request_paths) -%}
+   <div data-path="templates/partials/headers_nav.html" data-macro="page_header">
+	<!-- macro:page_header uses the request_paths dict object from get_paths context processor -->
+	{% if request_paths is not none -%}
+        <h1>
+        {% if "page_action" in request_paths and request_paths.page_action is not none -%}
+            <strong>{{ request_paths.page_action|title }}</strong>
+        {%- endif %}
+        {% if "thing_type" in request_paths and request_paths.thing_type is not none -%}
+             {{ request_paths.thing_type|title }}
+        {%- endif %}
+        {% if "thing_id" in request_paths and request_paths.thing_id is not none -%}
+            <small>{{ request_paths.thing_id }}</small>
+        {%- endif %}
+        </h1>
+    {%- endif %}
+   </div>
+{%- endmacro %}
+
+
+{% macro offset_input() -%}
+{% if "offset" in page_data.request_obj %}
+    <div class="row">
+       <label class="col-sm-6"><strong> Page navigation: </strong>Offset</label>
+        <div class="col-sm-6" >
+            {% if page_data.request_obj.offset is not none %}
+                {% if page_data.request_obj.offset|to_int > 1 %}
+                 <a href="{{ request.base_url|decrement_offset(page_data.request_obj, page_data.request_obj['offset']) }}"><i
+                        class="fas fa-angle-left"></i></a>
+                {% endif %}
+                {{ page_data.request_obj.offset }}
+                {% if page_data.data|length == 1000 %}
+                 <a href="{{ request.base_url|increment_offset(page_data.request_obj, page_data.request_obj['offset']) }}"><i
+                    class="fas fa-angle-right"></i></a>
+                 {% endif %}
+            {% endif %}
+        </div>
+   </div>
+{% endif %}
+{%- endmacro %}

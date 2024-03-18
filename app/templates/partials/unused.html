@@ -1,0 +1,68 @@
+
+{% macro view_form() -%}
+    <form id="jobs_query_form" class="row gy-2 gx-3 align-items-center" action="{{ url_for('view', thing_type=page_data.thing_type, thing_id=page_data.thing_id, **page_data.request_obj.args) }}" method="POST">
+        <!--{{ uid_input() }}-->
+        <!--{{ shorttext_input() }}-->
+        <!--{{ start_date() }}-->
+        <!--{{ end_date() }}-->
+         <div class="col-auto">
+            <button type="submit" class="btn btn-primary btn-sm">Go</button>
+        </div>
+    </form>
+{%- endmacro %}
+
+{% macro shorttext_input() -%}
+  <div class="col-auto">
+       <div class="row">
+           <div class="col-sm-5 col-form-label">Text</div>
+           <div class="col-sm-7">
+            <input type="text" class="form-control" name="shorttext">
+           </div>
+      </div>
+  </div>
+{%- endmacro %}
+
+
+{% macro parent_id_input() -%}
+  <div class="col-auto">
+    <div class="row">
+        <div class="col-sm-6 col-form-label">Parent ID</div>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="parent_id" pattern="[0-9]{0,10}">
+        </div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro uid_input() -%}
+  <div class="col-auto">
+      <div class="row">
+        <div for="uid_input" class="col-sm-5 col-form-label-">UID</div>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="uid_input" name="uid" pattern="[0-9]{0,10}">
+          </div>
+      </div>
+  </div>
+{%- endmacro %}
+
+{% macro start_date() -%}
+  <div class="col-auto">
+    <div class="row">
+      <label for="start_date" class="col-sm-3 col-form-label">Start</label>
+      <div class="col-sm-9">
+        <input type="date" class="form-control" name="start_date" id="start_date">
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro end_date() -%}
+  <div class="col-auto">
+    <div class="row">
+      <label for="end_date" class="col-sm-3 col-form-label">End</label>
+      <div class="col-sm-9">
+        <input type="date" class="form-control" name="end_date" id="end_date">
+      </div>
+    </div>
+  </div>
+{%- endmacro %}

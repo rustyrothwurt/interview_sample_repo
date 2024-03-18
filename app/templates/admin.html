@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--template: /templates/admin.html-->
+<div data-path="templates/admin.html" data-template="admin">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+             <h1><strong>Admin</strong> {{ page_data.thing_type|title }}
+            </h1>
+        </div>
+    </div>
+    <div class="card row">
+        <div class="card-header">
+            <h2>Test Results</h2>
+        </div>
+        <div class="card-body">
+            {% set list1 = page_data.data.split('\n') %}
+            {% for item in list1 %}
+               <p class="card-text">{{ item }}<p/>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

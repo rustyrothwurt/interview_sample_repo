@@ -1,0 +1,220 @@
+<!--
+    macros:headers_navs : /templates/partials/jobs_table.html
+    this is a file where the table to show ingestion jobs is kept
+    this can display one (will show child records) or more records (will
+    not show child records)
+-->
+{% macro jobs_table(input_data) -%}
+<div data-path="templates/partials/tables.html" data-macro="jobs_table">
+    <table class="table table-condensed" id="jobsTable" style="max-width:98%;word-wrap:break-word;">
+        <thead>
+            <tr>
+               <th class="uid" scope="col">UID</th>
+               <th class="ingested_date" scope="col">Ingested Date</th>
+               <th class="filename" scope="col">File Name</th>
+               <th class="shorttext" scope="col">Job Label</th>
+               <th class="benfords_result" scope="col">Benford's Law Result</th>
+               {% if "children" in input_data[0] %}
+                   <th class="children_count" scope="col">Children Count</th>
+                   <th class="children" scope="col">Children JSON</th>
+               {% endif %}
+            </tr>
+        </thead>
+        <tbody style="max-height:80rem;overflow-x:scroll;">
+            {% for item in input_data %}
+                <tr>
+                    <td class="uid">
+                        <a href="/view/jobs/{{item.uid}}">{{ item.uid }}</a>
+                    </td>
+                    <td class="ingested_date">
+                        {{ item.ingested_date }}
+                    </td>
+                    <td class="filename">
+                        {{ item.filename }}
+                    </td>
+                    <td class="shorttext">
+                        {{ item.shorttext }}
+                    </td>
+                    <td class="benfords_result">
+                        <pre>{{ get_json(item.benfords_result)|pretty_json }}</pre>
+                    </td>
+                    {% if "children" in item %}
+                       <td class="children">
+                            #: {{ item.children|length }}
+                         </td>
+                         <td class="children_json">
+                          {% for c in item.children %}
+                            ID: {{ c.id }} Value:{{ c.val }}
+                          {% endfor %}
+                         </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%- endmacro %}
+
+{% macro benfords_table(input_data) -%}
+<div data-path="templates/partials/tables.html" data-macro="benfords_table">
+    <table class="table table-condensed" id="benfordsTable" style="max-width:98%;word-wrap:break-word;">
+        <thead>
+            <tr>
+                <th rowspan="2" colspan="1" >
+                    Leading Digit
+                </th>
+                <th rowspan="1" colspan="2">
+                    Data Frequency
+                </th>
+                <th rowspan="1" colspan="2">
+                    Benford Frequency
+                </th>
+                <th rowspan="1" colspan="2">
+                    Frequency Difference
+                </th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>%</th>
+                <th>#</th>
+                <th>%</th>
+                <th>#</th>
+                <th>%</th>
+            </tr>
+        </thead>
+        <tbody style="max-height:80rem;overflow-x:scroll;">
+        {% for item in input_data %}
+            <tr>
+            {% for k,v in item.items() %}
+                {% if "n" == k %}
+                 <td class="n">
+                     {{ v }}
+                 </td>
+                {% elif "data_frequency" == k %}
+                     <td class="{{ k }}">
+                        {{ v }}
+                     </td>
+                {% elif "data_frequency_percent" == k %}
+                     <td class="{{ k }}">
+                        {{ v|round(3, 'floor') }}
+                     </td>
+                {% elif "benford_frequency" == k %}
+                     <td class="{{ k }}">
+                        {{ v|round(3, 'floor') }}
+                     </td>
+                {% elif "benford_frequency_percent" == k %}
+                     <td class="{{ k }}">
+                        {{ v|round(3, 'floor') }}
+                     </td>
+                {% elif "difference_frequency" == k %}
+                     <td class="{{ k }}">
+                        {{ v|round(3, 'floor') }}
+                     </td>
+                {% elif "difference_frequency_percent" == k %}
+                     <td class="{{ k }}">
+                        {{ v|round(3, 'floor') }}
+                     </td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%- endmacro %}
+
+{% macro significance_table(input_data) -%}
+<div data-path="templates/partials/tables.html" data-macro="significance_table">
+{% set ranges = [0.1, 0.05, 0.01] %}
+    <table class="table table-condensed" id="significanceTable" style="max-width:98%;word-wrap:break-word;">
+        <thead>
+            <tr>
+                <th rowspan="2" colspan="1" >
+                    Sig. Level (alpha)
+                </th>
+                <th rowspan="1" colspan="3">
+                    Kuiper
+                    <a href="https://github.com/nyoshimizu/benfordspy" title="code referenced from github for formulas" target="_blank">*</a>
+                    <a href="https://en.wikipedia.org/wiki/Kuiper's_test" title="wikipedia page" target="_blank"> **</a>
+                </th>
+                <th rowspan="1" colspan="3">
+                    Kolmogorov–Smirnov
+                    <a href="https://github.com/nyoshimizu/benfordspy" title="code referenced from github for formulas" target="_blank">*</a>
+                    <a href="https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test" title="wikipedia page" target="_blank">**</a>
+                </th>
+                <th rowspan="1" colspan="3">
+                    Chi-Square
+                </th>
+            </tr>
+            <tr>
+                <th>Test Value</th>
+                <th>> Range</th>
+                <th>Significant?</th>
+                <th>Test Value</th>
+                <th>> Range</th>
+                <th>Significant?</th>
+                 <th>Test Value</th>
+                <th>> Range</th>
+                <th>Significant?</th>
+            </tr>
+        </thead>
+        <tbody style="max-height:80rem;overflow-x:scroll;">
+          {% for r in ranges %}
+                <tr>
+                    <td>{{ r }}</td>
+                     {% for item in input_data %}
+                      {% if r == item.sig_value and "Kuiper" in item.test_type %}
+                         <td> {{ item.test_value|round(3, 'floor') }}</td>
+                         <td> {{ item.range }}</td>
+                         <td> {{ item.significant|to_bool }}</td>
+                         {% endif %}
+                     {% endfor %}
+                    {% for item in input_data %}
+                      {% if r == item.sig_value and "KS" in item.test_type %}
+                         <td> {{ item.test_value|round(3, 'floor') }}</td>
+                         <td> {{ item.range }}</td>
+                         <td> {{ item.significant|to_bool }}</td>
+                        {% endif %}
+                     {% endfor %}
+                {% for item in input_data %}
+                      {% if r == item.sig_value and "chi" in item.test_type %}
+                         <td> {{ item.test_value|round(3, 'floor') }}</td>
+                         <td> {{ item.range }}</td>
+                         <td> {{ item.significant|to_bool }}</td>
+                        {% endif %}
+                     {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%- endmacro %}
+
+{% macro data_table(input_data) -%}
+<div data-path="templates/partials/tables.html" data-macro="data_table">
+    <table class="table table-condensed" id="dataTable" style="max-width:98%;word-wrap:break-word;">
+        <thead>
+            <tr>
+               <th class="uid" scope="col">UID</th>
+               <th class="parent_id" scope="col">Parent ID</th>
+               <th class="value" scope="col">Value (stored as decimal)</th>
+            </tr>
+        </thead>
+        <tbody style="max-height:80rem;overflow-x:scroll;">
+            {% for item in input_data %}
+                <tr>
+                    <td class="uid">
+                        {{ item.uid }}
+                    </td>
+                    <td class="parent_id">
+                        <a href="/view/jobs/{{item.parent_id}}">{{ item.parent_id }}</a>
+                    </td>
+                    <td class="val">
+                        {{ item.val|round(3, 'floor') }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%- endmacro %}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="{{url_for('.static', filename='img/flask.png')}}">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="en">
+<title>Benford's Law Validator</title>
+
+<!-- load local bootstrap and fontawesome -->
+<link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/fontawesome.css')}}">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.plot.ly/plotly-2.6.3.min.js"></script>
+<script src="{{url_for('.static', filename='js/bootstrap.bundle.js')}}"></script>
+<script src="{{url_for('.static', filename='js/functions.js')}}"></script>
+
+<!--uses: templates/partials/headers_nav.html-->
+{% from "partials/headers_nav.html" import nav_link with context %}
+<!-- body -->
+<body>
+    <!--navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/index">
+             <i class="fas fa-home"></i>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              {{ nav_link("View Ingestion Jobs","view/jobs") }}
+            </li>
+            <li class="nav-item">
+              {{ nav_link("View Ingested Data","view/data") }}
+            </li>
+            <li class="nav-item">
+              {{ nav_link("Upload/Validate Data","create/jobs") }}
+            </li>
+            <li class="nav-item">
+              {{ nav_link("Setup Database","admin/db") }}
+            </li>
+            <li class="nav-item">
+              {{ nav_link("Run Tests","admin/tests") }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!--main -->
+	<br class="container-fluid" role="main">
+		<!-- id: alertbar
+			this is the main alert bar for status messages flashed by Flask
+			the types can be:
+			 error (maps to alert-danger)
+			 warning (maps to alert-warning)
+			 info (maps to alert-info)
+			 succsess (maps to alert-success)
+		 -->
+		<div id="alertbar" style="line-height:1;" uses="session:get_flashed_messages" >
+		{% with errors = get_flashed_messages(category_filter=["error"]) %}
+			{% if errors %}
+			{%- for msg in errors %}
+			<div class="alert alert-danger" role="alert">
+				<i class="fas fa-skull-crossbones"></i> {{ msg }}
+			</div>
+			{% endfor -%}
+			{% endif %}
+		{% endwith %}
+		{% with warns = get_flashed_messages(category_filter=["warning"]) %}
+			{% if warns %}
+			{%- for msg in warns %}
+			<div class="alert alert-warning" role="alert">
+				<i class="fas fa-exclamation-triangle"></i> {{ msg }}
+			</div>
+			{% endfor -%}
+			{% endif %}
+		{% endwith %}
+		{% with infos = get_flashed_messages(category_filter=["info"]) %}
+			{% if infos %}
+			{%- for msg in infos %}
+			<div class="alert alert-info" role="alert">
+				<i class="fas fa-info-circle"></i> {{ msg }}
+			</div>
+			{% endfor -%}
+			{% endif %}
+		{% endwith %}
+		{% with oks = get_flashed_messages(category_filter=["success"]) %}
+			{% if oks %}
+			{%- for msg in oks %}
+			<div class="alert alert-success" role="alert">
+				<i class="fas fa-thumbs-up"></i> {{ msg }}
+			</div>
+			{% endfor -%}
+			{% endif %}
+		{% endwith %}
+		</div>
+
+		<!-- id: block_body_container
+			this is the main container for rendering content in the app
+			the block below is body
+		 -->
+		<div id="block_body_container">
+			<div style="margin:0.1rem;">
+				{% block body %}
+				{% endblock %}
+			</div>
+		</div>
+
+		<!-- footer-->
+    </br>
+		<footer class="footer mt-auto py-3 bg-dark text-white">
+			<div class="row">
+				<span class="align-center">Copyright 2021 ARyding</span>
+			</div>
+		</footer>
+    </main>
+</body>
+</html>
